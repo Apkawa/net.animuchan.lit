@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/background"
+	
     android:layout_height="fill_parent"
     android:weightSum="1" android:layout_width="fill_parent" 
-    android:baselineAligned="true" android:orientation="horizontal" android:background="@color/background_color" android:gravity="center" android:padding="5px">
+    android:baselineAligned="true" android:orientation="horizontal"  
+    android:gravity="center" android:padding="5px" android:id="@+id/Background">
     
 
             <LinearLayout
                 android:id="@+id/Wrap"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:orientation="vertical" android:padding="1px" android:background="@color/border_color">
-                <TextView android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_height="wrap_content" android:orientation="vertical" 
+                android:padding="1px" 
+                style="@style/border"
+                
+                >
+                <TextView android:textAppearance="?android:attr/textAppearanceMedium"
+                	style="@style/text"
                 	android:id="@+id/TextView1" 
                 	android:editable="false" 
                 	android:onClick="onClick" android:text="@string/text" android:clickable="false" 
-                	android:textColor="@color/text_color" 
-                	android:textColorHighlight="@color/text_color" android:gravity="center|center_vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/text_background_color" android:shadowColor="#444" android:shadowRadius="0"></TextView>
+                	 
+                	android:gravity="center|center_vertical" 
+                	android:layout_width="match_parent" 
+                	android:layout_height="wrap_content" 
+                	 
+                	android:shadowColor="#444" 
+                	android:shadowRadius="0"></TextView>
             </LinearLayout>
 
     

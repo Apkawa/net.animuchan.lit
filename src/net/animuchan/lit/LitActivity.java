@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -106,7 +107,7 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
 	}
 	private void restoreState() {
 		
-		this.text = settings.getString("last_text", "");
+		
 		if (this.text.length() == 0){
 			updateTextView();
 			saveState();
@@ -132,12 +133,23 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences(PREFS_NAME, 0);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (savedInstanceState != null) {
+	        this.text = savedInstanceState.getString("last_text");
+	        if (this.text == null) {
+	        	this.text = "";
+	        }
+        } else {
+        	this.text = "";// settings.getString("last_text", "");
+        }
         
+        requestWindowFeature(Window.FEATURE_NO_TITLE);        
         setContentView(R.layout.main);
+        
         TextView tv = (TextView)findViewById(R.id.TextView1);
-        //tv.setOnFocusChangeListener(this);
-        tv.setOnClickListener(this);       
+        tv.setOnClickListener(this);
+
+        
+                
         restoreState();
         
     }
@@ -146,5 +158,12 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
        super.onStop();
        saveState();
     }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("last_text", this.text);
+    }
+
        
 }
