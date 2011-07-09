@@ -12,11 +12,15 @@ import java.util.Collection;
 import net.animuchan.lit.R;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.Window;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -31,14 +35,17 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 
-public class LitActivity extends Activity  implements OnClickListener{
+public class LitActivity extends Activity  implements OnClickListener, OnFocusChangeListener {
 	private String log_tag = "LitActivity";
+	private String text = "";
+	public static final String PREFS_NAME = "LIT";
+	private SharedPreferences settings = null;
 	
     /** Called when the activity is first created. */
     
 	public String readService() {
 		//HttpHost target = new HttpHost("lit.animuchan.net", 80);
-		String result = "";
+		String result = "\n";
 		try {
 			URL url = new URL("http://lit.animuchan.net/json/");
 	        URLConnection conn = url.openConnection();
@@ -61,16 +68,13 @@ public class LitActivity extends Activity  implements OnClickListener{
 	
 	
 	public String getRandomText() {
-		//String json_text = "{\"l3\": \"\u043c\u043e\u0437\u0433\u0438 \u043f\u043e \u043f\u043e\u043b\u0443 \u0440\u0430\u0441\u0442\u0435\u043a\u043b\u0438\u0441\u044c\", \"l2\": \"\u043d\u043e\u0433\u043e\u0439 \u0437\u0430 \u0447\u0442\u043e \u0442\u043e \u0437\u0430\u0446\u0435\u043f\u0438\u043b\u0441\u044f\", \"id\": 212.0, \"l0\": \"\u043e\u043b\u0435\u0433 \u043b\u0438\u0445\u0438\u043c \u043a\u0430\u0432\u0430\u043b\u0435\u0440\u0438\u0441\u0442\u043e\u043c\", \"l1\": \"\u0431\u0440\u0430\u043b \u0442\u0443\u0440\u043d\u0438\u043a\u0435\u0442 \u0432 \u043c\u0435\u0442\u0440\u043e \u043d\u043e \u0440\u0430\u0437\"}";
 		String json_text = this.readService();
 		Log.i(this.log_tag, "json_text: "+ json_text);
 		String text = new String("FAIL");
 		try {
 			JSONObject json = new JSONObject(json_text);
-			//text = json.getString("l0");
-		
 			text = "";
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 				text = text + json.getString(String.format("l%s", i)) + "\n";
 			}
 		} catch (JSONException e) {
@@ -81,9 +85,35 @@ public class LitActivity extends Activity  implements OnClickListener{
 		
 	}
 	
+	
+	
 	private void updateTextView() {
+		this.text = this.getRandomText();
 		TextView tv = (TextView)findViewById(R.id.TextView1);
-        tv.setText(this.getRandomText());
+        tv.setText(this.text);
+        saveState();
+         
+        
+	}
+	
+	private void saveState(){
+		TextView tv = (TextView)findViewById(R.id.TextView1);
+		this.text = (String) tv.getText();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("last_text", this.text);
+		editor.commit();
+
+	}
+	private void restoreState() {
+		
+		this.text = settings.getString("last_text", "");
+		if (this.text.length() == 0){
+			updateTextView();
+			saveState();
+		} else {
+			TextView tv = (TextView)findViewById(R.id.TextView1);
+	        tv.setText(this.text);
+		}
 	}
 	
 	public void onClick(View v){
@@ -94,15 +124,27 @@ public class LitActivity extends Activity  implements OnClickListener{
 					break;
 			}
 		}
+	public void onFocusChange(View v, boolean focus) {
+		;
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        settings = getSharedPreferences(PREFS_NAME, 0);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
         setContentView(R.layout.main);
         TextView tv = (TextView)findViewById(R.id.TextView1);
-        tv.setOnClickListener(this);
-        
-        this.updateTextView();
+        //tv.setOnFocusChangeListener(this);
+        tv.setOnClickListener(this);       
+        restoreState();
         
     }
+    @Override
+    protected void onStop(){
+       super.onStop();
+       saveState();
+    }
+       
 }
