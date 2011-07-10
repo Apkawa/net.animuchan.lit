@@ -12,11 +12,13 @@ import java.util.Collection;
 import net.animuchan.lit.R;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -34,9 +36,11 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 
-public class LitActivity extends Activity  implements OnClickListener, OnFocusChangeListener {
+
+public class LitActivity extends Activity  implements OnClickListener {
 	private String log_tag = "LitActivity";
 	private String text = "";
 	public static final String PREFS_NAME = "LIT";
@@ -86,6 +90,10 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
 		
 	}
 	
+	public String getCurrentText() {
+		return this.text;
+	}
+	
 	
 	
 	private void updateTextView() {
@@ -123,16 +131,25 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
 				case R.id.TextView1:
 					this.updateTextView();
 					break;
+				case R.id.Background:
+					this.updateTextView();
+					break;
 			}
 		}
-	public void onFocusChange(View v, boolean focus) {
-		;
-	}
-	
+
+//	@Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        HorizontalPager realViewSwitcher = new HorizontalPager(getApplicationContext());
+//        
+//        realViewSwitcher.addView(this.findViewById(R.id.Background));
+//	}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences(PREFS_NAME, 0);
+        
+        
         if (savedInstanceState != null) {
 	        this.text = savedInstanceState.getString("last_text");
 	        if (this.text == null) {
@@ -147,6 +164,9 @@ public class LitActivity extends Activity  implements OnClickListener, OnFocusCh
         
         TextView tv = (TextView)findViewById(R.id.TextView1);
         tv.setOnClickListener(this);
+        
+        this.findViewById(R.id.Background).setOnClickListener(this);
+       
 
         
                 
