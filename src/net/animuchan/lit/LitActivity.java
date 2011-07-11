@@ -12,9 +12,11 @@ import java.util.Collection;
 import net.animuchan.lit.R;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -36,6 +38,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+
+
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 
@@ -46,6 +50,27 @@ public class LitActivity extends Activity  implements OnClickListener {
 	public static final String PREFS_NAME = "LIT";
 	private SharedPreferences settings = null;
 	
+	private class GetTask extends
+			AsyncTask<Void, Void, String> {
+		private ProgressDialog _progressDialog;
+		
+		public GetTask() {
+			_progressDialog = ProgressDialog.show(LitActivity.this,
+					"Loading...",
+					"Please wait", true);
+			
+		}
+		
+		@Override
+		protected String doInBackground(Void... params){
+			return LitActivity.this.getRandomText();
+		}
+		
+		protected void onPostExecute(String text) {
+			LitActivity.this.setCurrentText(text);
+			_progressDialog.dismiss();
+		}
+	}
     /** Called when the activity is first created. */
     
 	public String readService() {
@@ -94,12 +119,15 @@ public class LitActivity extends Activity  implements OnClickListener {
 		return this.text;
 	}
 	
+	public void setCurrentText(String text){
+		this.text = text;
+		TextView tv = (TextView)findViewById(R.id.TextView1);
+        tv.setText(this.text);
+	}
 	
 	
 	private void updateTextView() {
-		this.text = this.getRandomText();
-		TextView tv = (TextView)findViewById(R.id.TextView1);
-        tv.setText(this.text);
+		this.setCurrentText(this.getRandomText());
         saveState();
          
         
@@ -114,8 +142,6 @@ public class LitActivity extends Activity  implements OnClickListener {
 
 	}
 	private void restoreState() {
-		
-		
 		if (this.text.length() == 0){
 			updateTextView();
 			saveState();
@@ -127,12 +153,15 @@ public class LitActivity extends Activity  implements OnClickListener {
 	
 	public void onClick(View v){
 			Log.i(this.log_tag, "onClick: "+v.getId());
+			GetTask task = new GetTask();
 			switch (v.getId()){
 				case R.id.TextView1:
-					this.updateTextView();
+					task.execute();
+					//this.updateTextView();
 					break;
 				case R.id.Background:
-					this.updateTextView();
+					task.execute();
+					//this.updateTextView();
 					break;
 			}
 		}
@@ -150,13 +179,13 @@ public class LitActivity extends Activity  implements OnClickListener {
         settings = getSharedPreferences(PREFS_NAME, 0);
         
         
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("last_text")) {
 	        this.text = savedInstanceState.getString("last_text");
 	        if (this.text == null) {
 	        	this.text = "";
 	        }
         } else {
-        	this.text = "";// settings.getString("last_text", "");
+        	this.text = settings.getString("last_text", "");
         }
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);        
@@ -166,10 +195,6 @@ public class LitActivity extends Activity  implements OnClickListener {
         tv.setOnClickListener(this);
         
         this.findViewById(R.id.Background).setOnClickListener(this);
-       
-
-        
-                
         restoreState();
         
     }
@@ -182,6 +207,7 @@ public class LitActivity extends Activity  implements OnClickListener {
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
+        saveState();
         savedInstanceState.putString("last_text", this.text);
     }
 
