@@ -1,41 +1,21 @@
 package net.animuchan.lit;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
-
-import net.animuchan.lit.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.Window;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -43,7 +23,9 @@ import org.json.JSONException;
 
 
 
-public class LitActivity extends Activity  implements OnClickListener {
+public class LitActivity extends Activity
+    implements OnClickListener {
+
 	private String log_tag = "LitActivity";
 	private String text = "";
 	public static final String PREFS_NAME = "LIT";
@@ -78,14 +60,12 @@ public class LitActivity extends Activity  implements OnClickListener {
 		try {
 			URL url = new URL("http://lit.animuchan.net/json/");
 	        URLConnection conn = url.openConnection();
-	        // Get the response
-	        BufferedReader rd = new BufferedReader(new 
+	        BufferedReader rd = new BufferedReader(new
 	        			InputStreamReader(conn.getInputStream()));
-	        String line = "";
+	        String line;
 	        while ((line = rd.readLine()) != null) {
 	        	result = result + line;
 		    }
-	        
 	        return result;
 		}
 		catch (Exception e)	{
@@ -99,7 +79,7 @@ public class LitActivity extends Activity  implements OnClickListener {
 	public String getRandomText() {
 		String json_text = this.readService();
 		Log.i(this.log_tag, "json_text: "+ json_text);
-		String text = new String("FAIL");
+		String text = "FAIL";
 		try {
 			JSONObject json = new JSONObject(json_text);
 			text = "";
@@ -112,10 +92,6 @@ public class LitActivity extends Activity  implements OnClickListener {
 		}
 		return text;
 		
-	}
-	
-	public String getCurrentText() {
-		return this.text;
 	}
 	
 	public void setCurrentText(String text){
@@ -165,13 +141,6 @@ public class LitActivity extends Activity  implements OnClickListener {
 			}
 		}
 
-//	@Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        HorizontalPager realViewSwitcher = new HorizontalPager(getApplicationContext());
-//        
-//        realViewSwitcher.addView(this.findViewById(R.id.Background));
-//	}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
