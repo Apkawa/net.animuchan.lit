@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.github.ysamlan.horizontalpager.HorizontalPager
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/horisontalpager"
     android:layout_width="fill_parent"
@@ -36,4 +36,4 @@
     
         
     </LinearLayout>
-</com.github.ysamlan.horizontalpager.HorizontalPager>
+</LinearLayout>

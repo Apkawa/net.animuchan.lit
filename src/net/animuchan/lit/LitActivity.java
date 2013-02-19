@@ -40,7 +40,6 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 
-import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 
 
