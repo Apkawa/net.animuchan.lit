@@ -28,7 +28,7 @@ public class LitActivity extends Activity
 
 	private String log_tag = "LitActivity";
 	private String text = "";
-	public static final String PREFS_NAME = "LIT";
+	private static final String PREFS_NAME = "LIT";
 	private SharedPreferences settings = null;
 	
 	private class GetTask extends
@@ -55,7 +55,6 @@ public class LitActivity extends Activity
     /** Called when the activity is first created. */
     
 	public String readService() {
-		//HttpHost target = new HttpHost("lit.animuchan.net", 80);
 		String result = "\n";
 		try {
 			URL url = new URL("http://lit.animuchan.net/json/");
